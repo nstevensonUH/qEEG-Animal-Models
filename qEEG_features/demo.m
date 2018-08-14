@@ -46,10 +46,10 @@ end
 % Estimate qEEG features from each channel of EEG in 1 minute signal
 % segments (epochs)
 fbnd = [0.5 2 ; 2 4 ; 4 8 ; 8 16 ; 16 32]; % Define frequency bands in Hz
-block_no2 = floor(ep1/elen1); fv = zeros(block_no2, 10+length(fbnd)-1);
+block_no2 = floor(ep1/elen1); fv = zeros(block_no2, 10+length(fbnd));
 for kk1 = 1:block_no2
     r1 = (kk1-1)*elen1+1; r2 = r1+elen1-1;
-    fval1 = zeros(2, 3); fval2 = fval1; fval4 = fval1; fval3 = zeros(2, length(fbnd));
+    fval1 = zeros(2, 3); fval2 = fval1; fval4 = fval1; fval5 = zeros(2,1); fval3 = zeros(2, length(fbnd));
     for kk2 = 1:ch_no
         dat1 = dat(r1:r2,kk2); % Segement EEG
         reeg = estimate_rEEG(dat1, fs1); % Estimate the rEEG signal
@@ -65,12 +65,12 @@ for kk1 = 1:block_no2
         fval3(kk2,:) = ap./sum(ap);
         ife = diff(unwrap(angle(hilbert(dat1))))/(2*pi)*fs1; % Estimate the instantaneous frequency
         fval4(kk2,:) = quantile(ife, [0.25 0.5 0.75]);
- %      fval5(kk2) = Higuchi1Dn(resample(dat, 64, fs1)); % resample for speed: Fractal dimension estimate
+       fval5(kk2) = Higuchi1Dn(resample(dat1, 64, fs1)); % resample for speed: Fractal dimension estimate
  %       fval6(kk2) = sample_entropy(resample(dat, 64, fs), 3, 1); % Sample
  %       entropy takes a long time to compute so include if you have the
  %       time
     end
-    fv(kk1,:) = [mean(fval1) mean(fval2) mean(fval3) mean(fval4)]; % mean(fval5)]; % mean(fval6)]; 
+    fv(kk1,:) = [mean(fval1) mean(fval2) mean(fval3) mean(fval4) mean(fval5)]; % mean(fval6)]; 
 end
 fvec1 = [fvec1 ; fv];
 
