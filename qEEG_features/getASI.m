@@ -74,6 +74,7 @@ envelope_concatenated = sum(fft_concatenated(:,freq_cutoff:end),2)./length(freq_
 
 % Compute quantization codebook using the data from both signal channels
 warning off all;
+rng(7)
 [~,codebook] = kmeans(envelope_concatenated,cbsize);
 warning on all;
 
